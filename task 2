@@ -1,0 +1,31 @@
+import requests
+import json
+
+def fetch_json_from_api(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print("Failed to fetch data. Status code:", response.status_code)
+            return None
+    except requests.RequestException as e:
+        print("Request Exception:", e)
+        return None
+
+def download_json_file(data, file_name):
+    try:
+        with open(file_name, 'w') as file:
+            json.dump(data, file, indent=4)
+        print(f"JSON data has been downloaded to '{file_name}'")
+    except IOError as e:
+        print("IOError:", e)
+
+
+api_url = 'https://s3.amazonaws.com/open-to-cors/assignment.json'
+
+json_data = fetch_json_from_api(api_url)
+
+if json_data:
+    download_json_file(json_data, 'output.json')
