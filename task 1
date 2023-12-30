@@ -1,0 +1,39 @@
+import requests
+import tkinter as tk
+from tkinter import messagebox
+
+def fetch_json_from_api():
+    try:
+        url = entry.get()
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            parse_json(data)
+        else:
+            messagebox.showerror("Error", f"Failed to fetch data. Status code: {response.status_code}")
+    except requests.RequestException as e:
+        messagebox.showerror("Error", f"Request Exception: {e}")
+
+def parse_json(json_data):
+    output_text.delete(1.0, tk.END)
+    
+    try:
+        output_text.insert(tk.END, json.dumps(json_data, indent=4))
+    except json.JSONDecodeError as e:
+        messagebox.showerror("Error", f"JSON Decoding Error: {e}")
+
+root = tk.Tk()
+root.title("JSON Parser")
+
+url_label = tk.Label(root, text="https://s3.amazonaws.com/open-to-cors/assignment.json")
+url_label.pack()
+entry = tk.Entry(root, width=50)
+entry.pack()
+
+fetch_button = tk.Button(root, text="Fetch Data", command=fetch_json_from_api)
+fetch_button.pack()
+
+output_text = tk.Text(root, height=20, width=80)
+output_text.pack()
+
+root.mainloop()
